@@ -1,7 +1,15 @@
 var config = require('./config'),
     fs = require('fs'),
     argv = require('optimist')
-          .demand(['p'])
+          .options('p',{
+            alias: 'project',
+            demand: true,
+            describe: "project name"
+          })
+          .options('t',{
+            alias: 'tags'
+          })
+          .usage('Usage: $0 -p <project> [--tag <tag>]')
           .argv,
     cfg = {},
     async = require('async'),
@@ -9,7 +17,7 @@ var config = require('./config'),
     now = new Date(),
     spawn = require('child_process').spawn,
     projectName = argv.p;
-
+    gitTag = argv.tag;
 
 if ( !config.projects[projectName] ) {
   console.log('Project '+projectName+' doesn\'t exist');
@@ -19,16 +27,19 @@ if ( !config.projects[projectName] ) {
 cfg  = config.projects[projectName];
 cfg.localrepos = cfg.localrepos || config.global.defaultLocalReposPath + '/' + projectName;
 cfg.target = cfg.target || config.global.defaultTargetPath + '/' + projectName;
-cfg.target += '/' + now.getFullYear() + '-'
-            + now.getMonth() + '-' 
-            + now.getDate() + '-'
-            + now.getHours() + '-'
-            + now.getMinutes() + '-'
-            + now.getSeconds();
+cfg.target += '/'+ now.getFullYear() + '-' + 
+            now.getMonth() + '-' + 
+            now.getDate() + '-' + 
+            now.getHours() + '-' +
+            now.getMinutes() + '-' +
+            now.getSeconds();
+cfg.target += gitTag?('_' + gitTag ):'';
 
 cfg.tmpTarget = cfg.target + '.tmp';
 
 var runCmd = function(cmd, args, opts, callback){
+  //console.log(cmd + ' ' + args.join(' '));
+
   var child = spawn(cmd, args, opts),
       result = '';
 
@@ -40,11 +51,11 @@ var runCmd = function(cmd, args, opts, callback){
   child.stderr.on('data', function(data){
     process.stderr.write(data.toString());
     result += data.toString();
-  })
+  });
 
   child.on('close', function(code){
     callback(code, result);
-  })
+  });
 };
 
 async.series([
@@ -65,12 +76,14 @@ async.series([
     runCmd('bash',[
       './tasks/archive.sh',
       cfg.localrepos,
-      cfg.branch,
+      gitTag?gitTag:cfg.branch,
       cfg.tmpTarget
     ],{
       "cwd": __dirname
     }, function(err){
-      fs.renameSync(cfg.tmpTarget, cfg.target);
+      if(!err){
+        fs.renameSync(cfg.tmpTarget, cfg.target);
+      }
       cb(err);
     });
   },
@@ -111,7 +124,7 @@ async.series([
 
 ], function(err, result){
   if(err){
-    console.log('Failed.'.red);
+    console.error('Failed.'.red);
     process.exit(1);
   }
 });

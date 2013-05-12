@@ -20,3 +20,8 @@ TMPTARGET="${TARGET}".TMP
 mkdir -p "$TARGET";
 
 git archive "$BRANCH" | tar -x -C "$TARGET"
+
+if [[ ${PIPESTATUS[0]} != 0 ]];then
+    exit 1;
+fi
+

@@ -64,8 +64,10 @@ http.createServer(function(req, res){
 console.log('Server has started at port ' + port);
 
 app.post('/deploy', function(req, res){
+
   var project = req.query.project;
   if(!project){
+    res.writeHeader(404, {"Content-Type": "text/plain"});
     res.end();
     return;
   }

@@ -3,5 +3,5 @@
 ##Usage
 
 ```
-node deploy.js -p <project name> [--tag <v0.1>]
+node deploy.js -p <project name> [-tag <tagname>]
 ```

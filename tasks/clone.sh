@@ -14,7 +14,7 @@ if [[ $1 = '-h' || -z $LOCALREPOS || -z $BRANCH || -z REPOS ]]; then
     show_usage
 fi
 
-mkdir -p "LOCALREPOS"
+mkdir -p $LOCALREPOS
 
 if [[ ! -d "$LOCALREPOS" ]]; then
     git clone "$REPOS" "$LOCALREPOS"

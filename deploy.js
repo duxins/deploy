@@ -28,7 +28,7 @@ cfg  = config.projects[projectName];
 cfg.localrepos = cfg.localrepos || config.global.defaultLocalReposPath + '/' + projectName;
 cfg.target = cfg.target || config.global.defaultTargetPath + '/' + projectName;
 cfg.target += '/'+ now.getFullYear() + '-' + 
-            now.getMonth() + '-' + 
+            (now.getMonth() + 1) + '-' + 
             now.getDate() + '-' + 
             now.getHours() + '-' +
             now.getMinutes() + '-' +

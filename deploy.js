@@ -27,12 +27,14 @@ if ( !config.projects[projectName] ) {
 cfg  = config.projects[projectName];
 cfg.localrepos = cfg.localrepos || config.global.defaultLocalReposPath + '/' + projectName;
 cfg.target = cfg.target || config.global.defaultTargetPath + '/' + projectName;
+
+
 cfg.target += '/'+ now.getFullYear() + '-' + 
-            (now.getMonth() + 1) + '-' + 
-            now.getDate() + '-' + 
-            now.getHours() + '-' +
-            now.getMinutes() + '-' +
-            now.getSeconds();
+            ('0' + (now.getMonth() + 1)).slice(-2) + '-' + 
+            ('0' + now.getDate()).slice(-2) + '-' + 
+            ('0' + now.getHours()).slice(-2) + '-' +
+            ('0' + now.getMinutes()).slice(-2) + '-' +
+            ('0' + now.getSeconds()).slice(-2);
 cfg.target += gitTag?('_' + gitTag ):'';
 
 cfg.tmpTarget = cfg.target + '.tmp';

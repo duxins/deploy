@@ -1,5 +1,7 @@
 var http = require('http'),
     url = require('url'),
+    Log = require('log'),
+    log = new Log('info');
     querystring = require('querystring'),
     spawn = require('child_process').spawn,
     port = process.env.PORT?process.env.PORT:3000,
@@ -20,7 +22,7 @@ app.get = function(pathname, handler){
 app.runShellCmd = function(cmd, args, opts, cb){
   var result = '';
 
-  console.log(cmd + ' ' + args.join(' '));
+  log.info('command: ' + cmd + ' ' + args.join(' '));
 
   cb = cb || function(){};
 
@@ -64,9 +66,13 @@ http.createServer(function(req, res){
 console.log('Server has started on port ' + port);
 
 app.post('/deploy', function(req, res){
-
   var project = req.query.project;
+
+  log.info('request from ' + req.connection.remoteAddress);
+  log.info('project:' + project);
+  
   if(!project){
+    log.info('project "'+project+'" doesn\'t exist');
     res.writeHeader(404, {"Content-Type": "text/plain"});
     res.end();
     return;
@@ -75,8 +81,8 @@ app.post('/deploy', function(req, res){
   app.runShellCmd('node', ['deploy.js', '-p', project], {
     "cwd": __dirname
   },function(code, result){
-    res.writeHeader(200, {"Content-Type": "text/plain"})
     res.write(result);
+    log.info(result);
     res.end();
   })
 })

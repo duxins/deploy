@@ -59,9 +59,9 @@ http.createServer(function(req, res){
     }
   });
 
-}).listen(port);
+}).listen(port, '0.0.0.0');
 
-console.log('Server has started at port ' + port);
+console.log('Server has started on port ' + port);
 
 app.post('/deploy', function(req, res){
 
